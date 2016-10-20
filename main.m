@@ -1,4 +1,4 @@
-clear all, close all; clc
+clear variables, close all; clc
 %% Initial values
 [corto, largo, primera_hoja] = getLength;
 escala_palito = 0.00936170212765957447;
