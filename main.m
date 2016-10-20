@@ -22,7 +22,7 @@ b(b>0)=1;                       % Y en 1 los valores restantes.
 waitbar(0.4);
 %% Rotar
 ee=strel('square',3);           % Nuevo elemento estructurante más pequeño
-% b = imdilate(b,ee);
+% b = imdilate(b,ee);           
 prop = regionprops(b,'all');    % Propiedades de la imagen (Para el ángulo)
 N = length(prop);               % Número de propiedades encontradas
 if N ~= 1                       % Si es diferente de 1, el esqueje no fue
@@ -56,19 +56,26 @@ if centroid_x < box_center      % Si el centroide está más a la izquierda
 end
 waitbar(0.8);
 %% Recortar imágenes
-nueva_b=[b,b,b];                      % Hacer que la capa binaria mida lo mismo
-                                % que la imagen original
-nueva_b=reshape(nueva_b,[fil,col,cap]);     % Con el tamaño de la imagen original
-originalImage(nueva_b==0)=0;          % Recortar los elementos que estén en 0
+nueva_b=[b,b,b];                        % Hacer que la capa binaria mida lo mismo
+                                        % que la imagen original
+nueva_b=reshape(nueva_b,[fil,col,cap]); % Con el tamaño de la imagen original
+originalImage(nueva_b==0)=0;            % Recortar los elementos que estén en 0
 waitbar(1);
 close(h);
 %% Mostrar resultado de la alineación
 figure(3); imshow(originalImage); impixelinfo;
 msgbox('Imagen del esqueje orientado, presione Aceptar para continuar','Info','info');
-prop = regionprops(b,'all');    % Propiedades de la nueva imagen
-box = prop(1).BoundingBox;      % Bounding box del esqueje
-largo_esqueje = box{3};         % Largo en pixeles del esqueje
-largo_esqueje = largo_esqueje * escala_palito;
+%% Largo del esqueje
+prop = regionprops(b,'all');                    % Propiedades de la nueva imagen
+box = prop(1).BoundingBox;                      % Bounding box del esqueje
+largo_esqueje = box(3);                         % Largo en pixeles del esqueje
+largo_esqueje = largo_esqueje * escala_palito;  
 if largo_esqueje > largo 
     msgbox('El esqueje es más largo que el máximo','Esqueje descartado','info');
+    error('Esqueje largo');
 end
+if largo_esqueje < corto 
+    msgbox('El esqueje es más corto que el mínimo','Esqueje descartado','info');
+    error('Esqueje corto');
+end
+%% Distancia a hoja

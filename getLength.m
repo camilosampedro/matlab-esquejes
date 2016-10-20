@@ -4,10 +4,10 @@ function [ corto, largo, primera_hoja ] = getLength()
 prompt = {'Largo máximo de los esquejes (cm):','Largo mínimo de los esquejes (cm):', 'Distancia de la base del tallo a la primera hoja(mm)'};
 dlg_title = 'Entrada';
 num_lines = 1;
-defaultans = {'20','10','5'};
+defaultans = {'10','5','5'};
 answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
-largo = answer(1);
-corto = answer(2);
-primera_hoja = answer(3);
+largo = str2double(answer(1));
+corto = str2double(answer(2));
+primera_hoja = str2double(answer(3));
 end
 
