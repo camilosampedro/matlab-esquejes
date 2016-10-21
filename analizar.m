@@ -107,7 +107,7 @@ for i = inicio_raiz:fin_esqueje
 end
 close(h);
 if exist('distancia_primera_hoja','var')
-    originalImage(:,i,1)=255;
+    originalImage(:,i-5:i+5,1)=255;
     distancia_primera_hoja = double(distancia_primera_hoja) * escala_palito * 10;
     %if distancia_primera_hoja < primera_hoja
     %    msgbox(strcat('Distancia a la primera hoja muy corto: ', num2str(distancia_primera_hoja), 'mm'),'Esqueje descartado','info');
