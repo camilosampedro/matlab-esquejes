@@ -6,8 +6,14 @@ dlg_title = 'Entrada';
 num_lines = 1;
 defaultans = {'10','5','5'};
 answer = inputdlg(prompt,dlg_title,num_lines,defaultans);
-largo = str2double(answer(1));
-corto = str2double(answer(2));
-primera_hoja = str2double(answer(3));
+if size(answer) ~= 3
+    largo = 0;
+    corto = 0;
+    primera_hoja = 0;
+else
+    largo = str2double(answer(1));
+    corto = str2double(answer(2));
+    primera_hoja = str2double(answer(3));
+end
 end
 

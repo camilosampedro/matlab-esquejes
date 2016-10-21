@@ -1,17 +1,11 @@
-clear all, close all; clc
+function [ imagen_alineada, largo, hoja_en_base ] = analizar( imagen )
 %% Valores iniciales
-[corto, largo, primera_hoja] = getLength;
-if corto == 0 && largo == 0 && primera_hoja == 0
-    error('Cancelado');
-end
 escala_palito = 0.00936170212765957447;
 %% Escoger la imagen
-originalImage = chooseAndRead();
-imagenSinModificar = originalImage;
 h = waitbar(0,'Transformando, por favor espere...');
 %% Transformar en CMYK
-[fil,col,cap] = size(originalImage);
-[c,m,y,k]=getCMYK(originalImage);
+[fil,col,cap] = size(imagen);
+[~,~,y,~]=getCMYK(imagen);
 waitbar(0.2);
 % figure(1); imshow(y); impixelinfo;
 %% Eliminar manchas
@@ -25,14 +19,14 @@ b(b<80)=0;                      % Binarizar en 0 los valores menores a 80.
 b(b>0)=1;                       % Y en 1 los valores restantes.
 waitbar(0.4);
 %% Rotar
-ee=strel('square',3);           % Nuevo elemento estructurante más pequeño
+%ee=strel('square',3);          % Nuevo elemento estructurante más pequeño
 % b = imdilate(b,ee);           
 prop = regionprops(b,'all');    % Propiedades de la imagen (Para el ángulo)
 N = length(prop);               % Número de propiedades encontradas
 if N ~= 1                       % Si es diferente de 1, el esqueje no fue
                                 % encontrado.
     close(h);
-    figure(1); imshow(imagenSinModificar);
+    %figure(1); imshow(imagenSinModificar);
     msgbox('No se ha encontrado un esqueje en la imagen','Error','error');
     error('No se ha encontrado un esqueje en la imagen');
 end
@@ -40,7 +34,7 @@ theta = prop(N).Orientation;    % Obtener el ángulo de orientación
 b = imrotate(b,-theta/2,'crop');% Orientar -theta medios para alinear con
                                 % el eje horizontal, rotar también la
                                 % imagen original
-originalImage = imrotate(originalImage, -theta / 2, 'crop');
+originalImage = imrotate(imagen, -theta / 2, 'crop');
 waitbar(0.6);
 %% Verificar si tiene la orientación adecuada (Hacia la derecha)
 prop = regionprops(b,'all');    % Propiedades de la nueva imagen
@@ -68,22 +62,22 @@ originalImage(nueva_b==0)=0;            % Recortar los elementos que estén en 0
 waitbar(1);
 close(h);
 %% Mostrar resultado de la alineación
-figure(3); imshow(originalImage); impixelinfo;
+%figure(3); imshow(originalImage); impixelinfo;
 %msgbox('Imagen del esqueje orientado, presione Aceptar para continuar','Info','info');
 %% Largo del esqueje
 prop = regionprops(b,'all');                    % Propiedades de la nueva imagen
 box = prop(1).BoundingBox;                      % Bounding box del esqueje
 largo_esqueje = box(3);                         % Largo en pixeles del esqueje
 largo_esqueje = largo_esqueje * escala_palito;  
-if largo_esqueje > largo 
-    msgbox(strcat('El esqueje es más largo que el máximo: ',num2str(largo_esqueje),' cm'),'Esqueje descartado','info');
-    error('Esqueje largo');
-end
-if largo_esqueje < corto 
-    msgbox(strcat('El esqueje es más corto que el mínimo: ',num2str(largo_esqueje),' cm'),'Esqueje descartado','info');
-    error('Esqueje corto');
-end
-msgbox(strcat('El largo del esqueje es : ',num2str(largo_esqueje),' cm'),'Largo del esqueje aceptado','info');
+%if largo_esqueje > largo 
+%    msgbox(strcat('El esqueje es más largo que el máximo: ',num2str(largo_esqueje),' cm'),'Esqueje descartado','info');
+%    error('Esqueje largo');
+%end
+%if largo_esqueje < corto 
+%    msgbox(strcat('El esqueje es más corto que el mínimo: ',num2str(largo_esqueje),' cm'),'Esqueje descartado','info');
+%    error('Esqueje corto');
+%end
+%msgbox(strcat('El largo del esqueje es : ',num2str(largo_esqueje),' cm'),'Largo del esqueje aceptado','info');
 %% Distancia a primera hoja
 inicio_raiz = uint64(ceil(box(1)));
 fin_esqueje = uint64(inicio_raiz + box(3));
@@ -113,12 +107,18 @@ for i = inicio_raiz:fin_esqueje
 end
 close(h);
 if exist('distancia_primera_hoja','var')
+    originalImage(:,i,1)=255;
     distancia_primera_hoja = double(distancia_primera_hoja) * escala_palito * 10;
-    if distancia_primera_hoja < primera_hoja
-        msgbox(strcat('Distancia a la primera hoja muy corto: ', num2str(distancia_primera_hoja), 'mm'),'Esqueje descartado','info');
-    else
-        msgbox(strcat('Distancia a la primera hoja aceptable: ', num2str(distancia_primera_hoja), 'mm'),'Esqueje aceptado','info');
-    end
+    %if distancia_primera_hoja < primera_hoja
+    %    msgbox(strcat('Distancia a la primera hoja muy corto: ', num2str(distancia_primera_hoja), 'mm'),'Esqueje descartado','info');
+    %else
+    %    msgbox(strcat('Distancia a la primera hoja aceptable: ', num2str(distancia_primera_hoja), 'mm'),'Esqueje aceptado','info');
+    %end
 else
-    msgbox('El esqueje no tiene hoja en base','Esqueje descartado','info');
+    %msgbox('El esqueje no tiene hoja en base','Esqueje descartado','info');
 end
+largo = largo_esqueje;
+hoja_en_base = distancia_primera_hoja;
+imagen_alineada = originalImage;
+end
+
