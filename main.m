@@ -71,11 +71,37 @@ box = prop(1).BoundingBox;                      % Bounding box del esqueje
 largo_esqueje = box(3);                         % Largo en pixeles del esqueje
 largo_esqueje = largo_esqueje * escala_palito;  
 if largo_esqueje > largo 
-    msgbox('El esqueje es más largo que el máximo','Esqueje descartado','info');
+    msgbox(strcat('El esqueje es más largo que el máximo: ',num2str(largo_esqueje),' cm'),'Esqueje descartado','info');
     error('Esqueje largo');
 end
 if largo_esqueje < corto 
-    msgbox('El esqueje es más corto que el mínimo','Esqueje descartado','info');
+    msgbox(strcat('El esqueje es más corto que el mínimo: ',num2str(largo_esqueje),' cm'),'Esqueje descartado','info');
     error('Esqueje corto');
 end
-%% Distancia a hoja
+%% Distancia a primera hoja
+inicio_raiz = box(1);
+fin_esqueje = inicio_raiz + largo_esqueje;
+primer_alto_columna = 0;
+for i = box(1):box(1) + box(3) 
+    columna_esqueje = imagenOriginal(i,:,:);
+    j = box(2);
+    while columna_esqueje(j) == 0
+        j = j + 1;
+    end
+    k = j;
+    while columna_esqueje(k) ~= 0
+        k = k + 1;
+    end
+    alto_columna = k - j;
+    if exist(primer_alto_columna,'var')
+        primer_alto_columna = alto_columna;
+    else
+        if alto_columna == primer_alto_columna + primer_alto_columna * 0.2
+            distancia_primera_hoja = i;
+        end
+    end
+end
+distancia_primera_hoja = distancia_primera_hoja * escala_palito / 10;
+if distancia_primera_hoja < primera_hoja
+    msgbox(strcat('Distancia a la primera hoja muy corto: ', num2str(distancia_primera_hoja), 'mm'),'Esqueje descartado','info');
+end
