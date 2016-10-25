@@ -148,7 +148,7 @@ function btn_analizar_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global originalImage
-[imagenAlineada,largo,hoja_en_base]=analizar(originalImage);
+[imagenAlineada,largo,hoja_en_base,area]=analizar(originalImage);
 maximo_usuario = str2double(get(handles.edit1, 'string'));
 minimo_usuario = str2double(get(handles.edit2, 'string'));
 hoja_en_base_usuario = str2double(get(handles.edit3, 'string'));
@@ -166,8 +166,9 @@ if hoja_en_base < hoja_en_base_usuario
 else
     clase_hoja_en_base = 'Distancia aceptable hoja en base: ';
 end
+area = strcat('Area: ',num2str(area), 'cm^2');
 imshow(imagenAlineada, 'Parent', handles.imagen_alineada);
-set(handles.text2,'String',strcat(clase,num2str(largo),'. ',clase_hoja_en_base, num2str(hoja_en_base)));
+set(handles.text2,'String',strcat(clase,num2str(largo),'. ',clase_hoja_en_base, num2str(hoja_en_base),area));
 
 
 % --- Executes on button press in btn_abrir_archivo.
