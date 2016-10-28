@@ -148,7 +148,7 @@ for i = inicio_raiz:fin_esqueje                     % Recorrer todas las
     if exist('primer_alto_columna','var')           % Tomar la primera
                                                     % columna como
                                                     % referencia
-        if alto_columna >= primer_alto_columna + primer_alto_columna * 0.5
+        if alto_columna >= primer_alto_columna + primer_alto_columna * 0.5 || alto_columna > 50
             distancia_primera_hoja = i-inicio_raiz; % Si alguna se sale un
                                                     % 50% de este alto,
                                                     % aquí es donde se
