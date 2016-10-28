@@ -33,6 +33,7 @@ if N ~= 1                       % Si es diferente de 1, el esqueje no fue
     error('No se ha encontrado un esqueje en la imagen');
 end
 theta = prop(N).Orientation;    % Obtener el ángulo de orientación
+disp(strcat('Theta tallo: ', num2str(theta)));
 b = imrotate(b,-theta/2,'crop');% Orientar -theta medios para alinear con
                                 % el eje horizontal, rotar también la
                                 % imagen original
@@ -74,7 +75,7 @@ for i = inicio_columnas:fin_columnas             % Iterar en todas las
 end
 columna_mas_grande = max(columnas);              % Como referencia se tendrá la
                                                  % columna más larga
-columnas(columnas > 40) = 0;                     % Todas las columnas mayores
+columnas(columnas > 50) = 0;                     % Todas las columnas mayores
                                                  % 40 pixeles serán descartadas
 columnas(columnas>columna_mas_grande*0.2) = 0;   % Todas las columnas mayores
                                                  % que el 20% de la mayor serán
@@ -105,11 +106,10 @@ tallo_b(:,1:i) = 0;
 tallo_b(:,j:end) = 0;
 nueva_b=[255*tallo_b,255*tallo_b,255*tallo_b];
 nueva_b=reshape(nueva_b,[fil,col,cap]);
-figure(1); imshow(nueva_b); impixelinfo
 %% Girar con el ángulo del tallo
 prop = regionprops(tallo_b,'all');    % Propiedades de la nueva imagen
 theta = prop(1).Orientation;
-disp(strcat('Theta: ', num2str(theta)));
+disp(strcat('Theta tallo: ', num2str(theta)));
 b = imrotate(b,-theta/2,'crop');% Orientar -theta medios para alinear con
                                 % el eje horizontal, rotar también la
                                 % imagen original
@@ -148,7 +148,7 @@ for i = inicio_raiz:fin_esqueje                     % Recorrer todas las
     if exist('primer_alto_columna','var')           % Tomar la primera
                                                     % columna como
                                                     % referencia
-        if alto_columna == primer_alto_columna + primer_alto_columna * 0.5
+        if alto_columna >= primer_alto_columna + primer_alto_columna * 0.5
             distancia_primera_hoja = i-inicio_raiz; % Si alguna se sale un
                                                     % 50% de este alto,
                                                     % aquí es donde se
