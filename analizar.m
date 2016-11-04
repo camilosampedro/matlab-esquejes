@@ -99,16 +99,14 @@ while(j-i<40)                                    % En esta parte se repite hasta
         j = j + 1;
     end
 end
-i = i + inicio_columnas;
-j = j + inicio_columnas;
-tallo_b = b;
-tallo_b(:,1:i) = 0;
-tallo_b(:,j:end) = 0;
-nueva_b=[255*tallo_b,255*tallo_b,255*tallo_b];
-nueva_b=reshape(nueva_b,[fil,col,cap]);
+i = i + inicio_columnas;              % Ubicaciones i y j del tallo del 
+j = j + inicio_columnas;              % esqueje
+tallo_b = b;                          % Tomar la máscara inicial
+tallo_b(:,1:i) = 0;                   % Recortar el tallo, por filas según
+tallo_b(:,j:end) = 0;                 % lo encontrado
 %% Girar con el ángulo del tallo
 prop = regionprops(tallo_b,'all');    % Propiedades de la nueva imagen
-theta = prop(1).Orientation;
+theta = prop(1).Orientation;          % Ángulo del tallo encontrado
 disp(strcat('Theta tallo: ', num2str(theta)));
 b = imrotate(b,-theta/2,'crop');% Orientar -theta medios para alinear con
                                 % el eje horizontal, rotar también la
@@ -122,11 +120,17 @@ originalImage(nueva_b==0)=0;            % Recortar los elementos que estén en 0
 waitbar(1);
 close(h);
 %% Largo del esqueje
-prop = regionprops(b,'all');                    % Propiedades de la nueva imagen
+prop = regionprops(b,'all');                    % Propiedades de la nueva 
+                                                % imagen
 box = prop(1).BoundingBox;                      % Bounding box del esqueje
-largo_esqueje = box(3);                         % Largo en pixeles del esqueje
-largo_esqueje = largo_esqueje * escala_palito;
-area = prop(1).Area * escala_palito * escala_palito;
+largo_esqueje = box(3);                         % Largo en pixeles del 
+                                                % esqueje
+largo_esqueje = largo_esqueje * escala_palito;  % Escalar según el tamaño 
+                                                % del palito
+area = prop(1).Area * escala_palito * escala_palito; % El área tomarla de
+                                                     % las propiedades y
+                                                     % escalarla por
+                                                     % cuadrado
 %% Distancia a primera hoja
 inicio_raiz = uint64(ceil(box(1)));                 % Se toma el inicio del
                                                     % eje X como inicio de
@@ -160,19 +164,24 @@ for i = inicio_raiz:fin_esqueje                     % Recorrer todas las
         if alto_columna > 25                        % La primera columna
                                                     % deberá tener como
                                                     % mínimo 25 pixeles de
-                                                    % alto
-            primer_alto_columna = alto_columna;
+            primer_alto_columna = alto_columna;     % alto
         end
     end
 end
 close(h);
-if exist('distancia_primera_hoja','var')
-    originalImage(:,i-5:i+5,1)=255;
+if exist('distancia_primera_hoja','var')            % Si sí se encontró la
+                                                    % distancia a la 
+                                                    % primera hoja
+    originalImage(:,i-5:i+5,1)=255;                 % Marcar la posición de
+                                                    % la primera hoja, se
+                                                    % escala y se convierte
+                                                    % a milímetros
     distancia_primera_hoja = double(distancia_primera_hoja) * escala_palito * 10;
-    hoja_en_base = distancia_primera_hoja;
+    hoja_en_base = distancia_primera_hoja;          % Retornarla
 else
-    hoja_en_base = 0;
+    hoja_en_base = 0;                               % Retornar cero si no
+                                                    % se encuentra
 end
-largo = largo_esqueje;
+largo = largo_esqueje;                              % Valores a retornar
 imagen_alineada = originalImage;
 end
